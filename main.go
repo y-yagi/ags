@@ -53,11 +53,7 @@ func usage() {
 }
 
 func isOption(arg string) bool {
-	if strings.HasPrefix(arg, "-") {
-		return true
-	}
-
-	return false
+	return strings.HasPrefix(arg, "-")
 }
 
 func colorized(out string, patterns []string) string {
