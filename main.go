@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	pipeline "github.com/mattn/go-pipeline"
 )
@@ -11,10 +12,6 @@ import (
 var (
 	logger *log.Logger
 )
-
-func usage() {
-	fmt.Fprintf(os.Stderr, "usage: %s PATTERNS\n", os.Args[0])
-}
 
 func main() {
 	args := os.Args[1:]
@@ -24,8 +21,29 @@ func main() {
 	}
 
 	var cmds [][]string
+	var cmdWithOptions []string
+	var patterns []string
 
-	for _, pattern := range args {
+	cmdWithOptions = append(cmdWithOptions, "ag")
+	for i, arg := range args {
+		if isOption(arg) {
+			cmdWithOptions = append(cmdWithOptions, arg)
+		} else {
+			patterns = args[i:]
+			break
+		}
+	}
+
+	if len(patterns) == 0 {
+		usage()
+		os.Exit(1)
+	}
+
+	cmdWithOptions = append(cmdWithOptions, patterns[0])
+	patterns = patterns[1:]
+	cmds = append(cmds, cmdWithOptions)
+
+	for _, pattern := range patterns {
 		cmds = append(cmds, []string{"ag", pattern})
 	}
 
@@ -33,4 +51,16 @@ func main() {
 	if err == nil {
 		fmt.Printf(string(out))
 	}
+}
+
+func usage() {
+	fmt.Fprintf(os.Stderr, "usage: %s [options] PATTERNS\n", os.Args[0])
+}
+
+func isOption(arg string) bool {
+	if strings.HasPrefix(arg, "-") {
+		return true
+	}
+
+	return false
 }
