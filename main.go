@@ -2,16 +2,11 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
 	"github.com/fatih/color"
 	pipeline "github.com/mattn/go-pipeline"
-)
-
-var (
-	logger *log.Logger
 )
 
 func main() {
