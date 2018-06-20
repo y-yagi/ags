@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/fatih/color"
 	pipeline "github.com/mattn/go-pipeline"
 )
 
@@ -40,16 +41,15 @@ func main() {
 	}
 
 	cmdWithOptions = append(cmdWithOptions, patterns[0])
-	patterns = patterns[1:]
 	cmds = append(cmds, cmdWithOptions)
 
-	for _, pattern := range patterns {
+	for _, pattern := range patterns[1:] {
 		cmds = append(cmds, []string{"ag", pattern})
 	}
 
 	out, err := pipeline.Output(cmds...)
 	if err == nil {
-		fmt.Printf(string(out))
+		fmt.Printf(colorized(string(out), patterns))
 	}
 }
 
@@ -63,4 +63,13 @@ func isOption(arg string) bool {
 	}
 
 	return false
+}
+
+func colorized(out string, patterns []string) string {
+	yellow := color.New(color.FgYellow).SprintFunc()
+	for _, pattern := range patterns {
+		out = strings.Replace(out, pattern, yellow(pattern), -1)
+	}
+
+	return out
 }
