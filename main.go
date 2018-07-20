@@ -44,7 +44,8 @@ func main() {
 
 	out, err := pipeline.Output(cmds...)
 	if err == nil {
-		fmt.Printf(colorized(string(out), patterns))
+		out := strings.Replace(string(out), "%", "%%", -1)
+		fmt.Printf(colorized(out, patterns))
 	}
 }
 
